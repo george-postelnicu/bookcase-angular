@@ -1,0 +1,9 @@
+export enum StatusType {
+  HAVE = "HAVE",
+  LENT = "LENT",
+  BORROWED = "BORROWED",
+  WANT = "WANT",
+  LOST = "LOST",
+  DUPLICATE = "DUPLICATE",
+  NEED_REPLACEMENT = "NEED_REPLACEMENT"
+}
