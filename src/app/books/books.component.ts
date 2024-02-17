@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Book} from "../book/book";
-import {NgForOf} from "@angular/common";
+import {AsyncPipe, NgForOf} from "@angular/common";
 import {BookService} from "../book.service";
-import {Observable} from "rxjs";
+import {debounceTime, distinctUntilChanged, Observable, Subject, switchMap} from "rxjs";
 import {RouterLink} from "@angular/router";
 
 @Component({
@@ -10,23 +10,34 @@ import {RouterLink} from "@angular/router";
   standalone: true,
   imports: [
     NgForOf,
-    RouterLink
+    RouterLink,
+    AsyncPipe
   ],
   templateUrl: './books.component.html',
   styleUrl: './books.component.css'
 })
 export class BooksComponent implements OnInit {
-  books: Book[] = [];
+  books$!: Observable<Book[]>;
+  private searchTerms: Subject<string> = new Subject<string>();
 
   constructor(private bookService: BookService) {
   }
 
   ngOnInit(): void {
-    this.getBooks();
+    this.books$ = this.bookService.getBooks();
+    this.books$ = this.searchTerms.pipe(
+      // wait 300ms after each keystroke before considering the term
+      debounceTime(300),
+
+      // ignore new term if same as previous term
+      distinctUntilChanged(),
+
+      // switch to new search observable each time the term changes
+      switchMap((term: string) => this.bookService.searchBooks(term)),
+    );
   }
 
-  getBooks(): void {
-    this.bookService.getBooks()
-      .subscribe(books => this.books = books);
+  search(term: string): void {
+    this.searchTerms.next(term);
   }
 }

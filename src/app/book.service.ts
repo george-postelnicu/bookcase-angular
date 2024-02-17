@@ -1,33 +1,48 @@
 import {Injectable} from '@angular/core';
 import {Book} from "./book/book";
-import {
-  conflictsAndAdaptations,
-  landscapesOfIdentity, oneHundredFiftyHouses,
-  oneHundredStepsThrough20thCenturyEstonianArchitecture
-} from "./book/book-data-common";
-import {Observable, of} from "rxjs";
+import {catchError, Observable, of} from "rxjs";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookService {
+  private readonly heroesUrl: string = "api/books";
 
-  constructor() {
+  constructor(private http: HttpClient) {
   }
 
-  private _books: Book[] = [
-    landscapesOfIdentity(),
-    conflictsAndAdaptations(),
-    oneHundredStepsThrough20thCenturyEstonianArchitecture(),
-    oneHundredFiftyHouses()
-  ];
   getBooks(): Observable<Book[]> {
-    return of(this._books);
+    return this.http.get<Book[]>(this.heroesUrl)
+      .pipe(
+        catchError(this.handleError<Book[]>('getBooks', []))
+      );
   }
 
   getBook(id: number): Observable<Book> {
-    let foundBook = this._books.find(book => book.id === id)!;
-    return of(foundBook);
+    const url = `${this.heroesUrl}/${id}`;
+    return this.http.get<Book>(url).pipe(
+      catchError(this.handleError<Book>(`getBook id=${id}`))
+    );
   }
 
+  searchBooks(term: string): Observable<Book[]> {
+    if (!term.trim()) {
+      // if not search term, return empty hero array.
+      return of([]);
+    }
+    return this.http.get<Book[]>(`${this.heroesUrl}/?name=${term}`).pipe(
+      catchError(this.handleError<Book[]>('searchBooks', []))
+    );
+  }
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+
+      console.log(`${operation} failed: ${error.message}`);
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
+  }
 }

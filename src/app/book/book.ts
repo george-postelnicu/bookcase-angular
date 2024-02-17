@@ -5,7 +5,7 @@ import {Keyword} from "../relations/keyword";
 import {Language} from "../relations/language";
 
 export interface Book extends BookBase {
-  id?: number;
+  id: number;
   authors?: Author[];
   keywords?: Keyword[];
   languages?: Language[];
@@ -18,7 +18,7 @@ export interface BookDto extends BookBase {
 }
 
 interface BookBase {
-  name?: string;
+  name: string;
   fullTitle?: string;
   description?: string;
   publisher?: string;

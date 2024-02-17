@@ -162,3 +162,10 @@ export const estonianArtBookNames = (): string[] => {
 export const housesYouNeedToVisit = (): string[] => {
   return [HOUSES_YOU_NEED_TO_VISIT_BEFORE_YOU_DIE];
 };
+
+export const ALL_BOOKS =(): Book[] => [
+  landscapesOfIdentity(),
+  conflictsAndAdaptations(),
+  oneHundredStepsThrough20thCenturyEstonianArchitecture(),
+  oneHundredFiftyHouses()
+];
