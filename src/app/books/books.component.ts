@@ -3,12 +3,14 @@ import {Book} from "../book/book";
 import {NgForOf} from "@angular/common";
 import {BookService} from "../book.service";
 import {Observable} from "rxjs";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'books',
   standalone: true,
   imports: [
-    NgForOf
+    NgForOf,
+    RouterLink
   ],
   templateUrl: './books.component.html',
   styleUrl: './books.component.css'
