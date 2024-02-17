@@ -70,6 +70,7 @@ export const anotherBookLikeLandscapes = (): Book => {
 
 export const conflictsAndAdaptations = (): Book => {
   return {
+    id: 2,
     name: CONFLICTS_AND_ADAPTATIONS,
     isbn: "ISBN 978-9949-687-44-2",
     status: StatusType.HAVE,
@@ -91,6 +92,7 @@ export const conflictsAndAdaptations = (): Book => {
 
 export const oneHundredStepsThrough20thCenturyEstonianArchitecture = (): Book => {
   return {
+    id: 3,
     name: _20TH_CENTURY_ESTONIAN_ARCHITECTURE,
     isbn: "ISBN 978-9949-9078-6-1",
     status: StatusType.HAVE,
@@ -118,6 +120,7 @@ export const bothLanguages = (): Language[] => {
 
 export const oneHundredFiftyHouses = (): Book => {
   return {
+    id: 4,
     name: HOUSES_YOU_NEED_TO_VISIT_BEFORE_YOU_DIE,
     isbn: ISBN_HOUSES_YOU_NEED_TO_VISIT,
     status: StatusType.HAVE,

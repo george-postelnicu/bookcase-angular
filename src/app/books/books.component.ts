@@ -1,11 +1,8 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Book} from "../book/book";
-import {
-  conflictsAndAdaptations,
-  landscapesOfIdentity, oneHundredFiftyHouses,
-  oneHundredStepsThrough20thCenturyEstonianArchitecture
-} from "../book/book-data-common";
 import {NgForOf} from "@angular/common";
+import {BookService} from "../book.service";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'books',
@@ -16,11 +13,18 @@ import {NgForOf} from "@angular/common";
   templateUrl: './books.component.html',
   styleUrl: './books.component.css'
 })
-export class BooksComponent {
-  books: Book[] = [
-    landscapesOfIdentity(),
-    conflictsAndAdaptations(),
-    oneHundredStepsThrough20thCenturyEstonianArchitecture(),
-    oneHundredFiftyHouses()
-  ];
+export class BooksComponent implements OnInit {
+  books: Book[] = [];
+
+  constructor(private bookService: BookService) {
+  }
+
+  ngOnInit(): void {
+    this.getBooks();
+  }
+
+  getBooks(): void {
+    this.bookService.getBooks()
+      .subscribe(books => this.books = books);
+  }
 }
