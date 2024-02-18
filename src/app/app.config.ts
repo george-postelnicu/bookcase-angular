@@ -1,17 +1,14 @@
 import {ApplicationConfig, importProvidersFrom} from '@angular/core';
-import {provideRouter, withComponentInputBinding} from '@angular/router';
+import {provideRouter} from '@angular/router';
 
 import {routes} from './app.routes';
-import {InMemoryDataService} from "./in-memory-data.service";
-import {HttpClientInMemoryWebApiModule} from "angular-in-memory-web-api";
-import {provideHttpClient} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
+import {FakeResponseInterceptor} from "./fake-response-interceptor.service";
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(),
-    importProvidersFrom(HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, {dataEncapsulation: false}
-    )),
-    provideRouter(routes, withComponentInputBinding())
+    provideRouter(routes),
+    importProvidersFrom(HttpClientModule),
+    {provide: HTTP_INTERCEPTORS, useClass: FakeResponseInterceptor, multi: true}
   ]
 };

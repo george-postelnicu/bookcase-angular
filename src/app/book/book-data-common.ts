@@ -3,6 +3,7 @@ import {StatusType} from "./status-type";
 import {CoverType} from "./cover-type";
 import {Keyword} from "../relations/keyword";
 import {Language} from "../relations/language";
+import {PagedBooks} from "./paged-books";
 
 const ART: string = "Art";
 const ARCHITECTURE: string = "Architecture";
@@ -163,9 +164,36 @@ export const housesYouNeedToVisit = (): string[] => {
   return [HOUSES_YOU_NEED_TO_VISIT_BEFORE_YOU_DIE];
 };
 
-export const ALL_BOOKS =(): Book[] => [
-  landscapesOfIdentity(),
-  conflictsAndAdaptations(),
-  oneHundredStepsThrough20thCenturyEstonianArchitecture(),
-  oneHundredFiftyHouses()
-];
+export const ALL_BOOKS = {
+    content: [
+      landscapesOfIdentity(),
+      conflictsAndAdaptations(),
+      oneHundredStepsThrough20thCenturyEstonianArchitecture(),
+      oneHundredFiftyHouses()
+    ],
+    pageable: {
+      pageNumber: 0,
+      pageSize: 20,
+      sort: {
+        sorted: false,
+        unsorted: true,
+        empty: true
+      },
+      offset: 0,
+      paged: true,
+      unpaged: false
+    },
+    totalPages: 1,
+    totalElements: 4,
+    last: true,
+    first: true,
+    size: 20,
+    number: 0,
+    sort: {
+      sorted: false,
+      unsorted: true,
+      empty: true
+    },
+    numberOfElements: 4,
+    empty: false
+};

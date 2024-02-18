@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Book} from "./book/book";
-import {catchError, Observable, of} from "rxjs";
+import {catchError, Observable, of, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
+import {emptyResult, PagedBooks} from "./book/paged-books";
 
 @Injectable({
   providedIn: 'root'
@@ -12,27 +13,29 @@ export class BookService {
   constructor(private http: HttpClient) {
   }
 
-  getBooks(): Observable<Book[]> {
-    return this.http.get<Book[]>(this.heroesUrl)
+  getBooks(): Observable<PagedBooks> {
+    return this.http.get<PagedBooks>(this.heroesUrl)
       .pipe(
-        catchError(this.handleError<Book[]>('getBooks', []))
+        tap(_ => console.log('fetched all heroes')),
+        catchError(this.handleError<PagedBooks>('getBooks', undefined))
       );
   }
 
   getBook(id: number): Observable<Book> {
-    const url = `${this.heroesUrl}/${id}`;
+    const url: string = `${this.heroesUrl}/${id}`;
     return this.http.get<Book>(url).pipe(
+      tap(_ => console.log('fetched a hero')),
       catchError(this.handleError<Book>(`getBook id=${id}`))
     );
   }
 
-  searchBooks(term: string): Observable<Book[]> {
+  searchBooks(term: string): Observable<PagedBooks> {
     if (!term.trim()) {
       // if not search term, return empty hero array.
-      return of([]);
+      return of(emptyResult);
     }
-    return this.http.get<Book[]>(`${this.heroesUrl}/?name=${term}`).pipe(
-      catchError(this.handleError<Book[]>('searchBooks', []))
+    return this.http.get<PagedBooks>(`${this.heroesUrl}/?name=${term}`).pipe(
+      catchError(this.handleError<PagedBooks>('searchBooks', emptyResult))
     );
   }
 

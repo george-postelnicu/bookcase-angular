@@ -14,7 +14,7 @@ import {Location, NgIf} from "@angular/common";
   styleUrl: './book.component.css'
 })
 export class BookComponent implements OnInit {
-  book: Book | undefined;
+  book!: Book;
 
   constructor(private route: ActivatedRoute, private bookService: BookService, private location: Location) {
   }
