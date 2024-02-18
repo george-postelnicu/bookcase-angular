@@ -8,11 +8,12 @@ import {ErrorResponse} from "./book/error";
 
 @Injectable()
 export class FakeResponseInterceptor implements HttpInterceptor {
+  private counter: number = 1;
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (req.url.includes('api/books') && req.method == 'GET') {
+      console.log(`Api call ${req.url} intercepted ${this.counter++}`)
       let fakeResponse: any = ALL_BOOKS;
       let status: number = 200;
-
       if ((req.url.match(/\//g) || []).length > 1) {
         const id: number = Number(req.url.substring(req.url.lastIndexOf("/") + 1));
         fakeResponse = this.getBook(id);
@@ -22,7 +23,7 @@ export class FakeResponseInterceptor implements HttpInterceptor {
       }
 
       if (req.url.includes("?")) {
-        fakeResponse = this.getBooks(req.params.get('name')!);
+        fakeResponse = this.getBooks(req.url.substring(req.url.lastIndexOf("=") + 1));
       }
 
       return of(new HttpResponse({status: status, body: fakeResponse}));

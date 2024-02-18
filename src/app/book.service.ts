@@ -17,7 +17,7 @@ export class BookService {
     return this.http.get<PagedBooks>(this.heroesUrl)
       .pipe(
         tap(_ => console.log('fetched all heroes')),
-        catchError(this.handleError<PagedBooks>('getBooks', undefined))
+        catchError(this.handleError<PagedBooks>('getBooks', emptyResult))
       );
   }
 
@@ -30,13 +30,9 @@ export class BookService {
   }
 
   searchBooks(term: string): Observable<PagedBooks> {
-    if (!term.trim()) {
-      // if not search term, return empty hero array.
-      return of(emptyResult);
-    }
-    return this.http.get<PagedBooks>(`${this.heroesUrl}/?name=${term}`).pipe(
-      catchError(this.handleError<PagedBooks>('searchBooks', emptyResult))
-    );
+      return this.http.get<PagedBooks>(`${this.heroesUrl}/?name=${term}`).pipe(
+        catchError(this.handleError<PagedBooks>('searchBooks', emptyResult))
+      );
   }
 
   private handleError<T>(operation = 'operation', result?: T) {

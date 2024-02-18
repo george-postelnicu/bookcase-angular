@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {Book} from "../book/book";
 import {AsyncPipe, NgForOf} from "@angular/common";
 import {BookService} from "../book.service";
-import {debounceTime, distinctUntilChanged, Observable, Subject, switchMap} from "rxjs";
+import {debounceTime, distinctUntilChanged, EMPTY, Observable, startWith, Subject, switchMap, tap} from "rxjs";
 import {RouterLink} from "@angular/router";
 import {PagedBooks} from "../book/paged-books";
 
@@ -19,23 +18,28 @@ import {PagedBooks} from "../book/paged-books";
 })
 export class BooksComponent implements OnInit {
   books$!: Observable<PagedBooks>;
+  filteredBooks$!: Observable<PagedBooks>;
   private searchTerms: Subject<string> = new Subject<string>();
 
   constructor(private bookService: BookService) {
   }
 
   ngOnInit(): void {
-    this.books$ = this.bookService.getBooks();
-    /*this.books$ = this.searchTerms.pipe(
-      // wait 300ms after each keystroke before considering the term
-      debounceTime(300),
-
-      // ignore new term if same as previous term
+    this.books$ = this.searchTerms.pipe(
+      startWith(""),
+      debounceTime(500),
       distinctUntilChanged(),
-
-      // switch to new search observable each time the term changes
-      switchMap((term: string) => this.bookService.searchBooks(term)),
-    );*/
+      tap((value: string) => console.log(`Value searched [${value}]`)),
+      switchMap((value: string) => {
+        if (value.trim() === '') {
+          return this.bookService.getBooks();
+        } else if (value.trim().length > 2) {
+          return this.bookService.searchBooks(value);
+        } else {
+          return EMPTY;
+        }
+      })
+    );
   }
 
   search(term: string): void {
