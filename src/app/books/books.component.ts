@@ -3,7 +3,7 @@ import {AsyncPipe, NgForOf} from "@angular/common";
 import {BookService} from "../book.service";
 import {debounceTime, distinctUntilChanged, EMPTY, Observable, startWith, Subject, switchMap, tap} from "rxjs";
 import {RouterLink} from "@angular/router";
-import {PagedBooks} from "../book/paged-books";
+import {PagedBooks} from "../models/paged-books";
 
 @Component({
   selector: 'books',

@@ -1,8 +1,8 @@
 import {Book} from "./book";
 import {StatusType} from "./status-type";
 import {CoverType} from "./cover-type";
-import {Keyword} from "../relations/keyword";
-import {Language} from "../relations/language";
+import {Keyword} from "./keyword";
+import {Language} from "./language";
 import {PagedBooks} from "./paged-books";
 
 const ART: string = "Art";
@@ -164,7 +164,7 @@ export const housesYouNeedToVisit = (): string[] => {
   return [HOUSES_YOU_NEED_TO_VISIT_BEFORE_YOU_DIE];
 };
 
-export const ALL_BOOKS = {
+export const ALL_BOOKS: PagedBooks = {
     content: [
       landscapesOfIdentity(),
       conflictsAndAdaptations(),

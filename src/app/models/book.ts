@@ -1,8 +1,8 @@
 import {CoverType} from "./cover-type";
 import {StatusType} from "./status-type";
-import {Author} from "../relations/author";
-import {Keyword} from "../relations/keyword";
-import {Language} from "../relations/language";
+import {Author} from "./author";
+import {Keyword} from "./keyword";
+import {Language} from "./language";
 
 export interface Book extends BookBase {
   id: number;
@@ -27,5 +27,5 @@ interface BookBase {
   publishYear?: number;
   pages?: number;
   barcode?: string;
-  status?: StatusType
+  status: StatusType
 }

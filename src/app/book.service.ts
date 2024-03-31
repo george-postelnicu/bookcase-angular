@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {Book} from "./book/book";
+import {Book} from "./models/book";
 import {catchError, Observable, of, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
-import {emptyResult, PagedBooks} from "./book/paged-books";
+import {emptyResult, PagedBooks} from "./models/paged-books";
 
 @Injectable({
   providedIn: 'root'

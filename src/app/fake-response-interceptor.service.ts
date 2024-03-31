@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
-import {ALL_BOOKS} from "./book/book-data-common";
-import {PagedBooks} from "./book/paged-books";
-import {Book} from "./book/book";
-import {ErrorResponse} from "./book/error";
+import {ALL_BOOKS} from "./models/book-data-common";
+import {PagedBooks} from "./models/paged-books";
+import {Book} from "./models/book";
+import {ErrorResponse} from "./models/error";
 
 @Injectable()
 export class FakeResponseInterceptor implements HttpInterceptor {

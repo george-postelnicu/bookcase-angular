@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - bookcase-network
+
+networks:
+  bookcase-network:
+    external: true
