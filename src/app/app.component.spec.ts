@@ -20,10 +20,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('bookcase-angular');
   });
 
-  it('should render title', () => {
+  it('should render a router outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, bookcase-angular');
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });
