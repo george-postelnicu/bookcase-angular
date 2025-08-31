@@ -1,5 +1,21 @@
 # bookcase-angular
 
+Angular 20 application using standalone components and modern build system.
+
+## Prerequisites
+
+- **Node.js**: v20.19+ or v22.12+ (required for Angular 20)
+- **npm**: 8.0+ 
+- **Angular CLI**: 20.x
+
+## Technology Stack
+
+- **Angular**: 20.2.1
+- **TypeScript**: 5.8.3
+- **Build System**: @angular-devkit/build-angular:application
+- **HTTP Client**: Modern provideHttpClient with functional interceptors
+- **Testing**: Karma + Jasmine
+
 ## development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.

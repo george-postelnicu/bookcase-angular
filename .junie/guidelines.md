@@ -1,12 +1,12 @@
-Project: bookcase-angular (Angular 19)
+Project: bookcase-angular (Angular 20)
 
 This document captures project-specific knowledge to help advanced contributors be productive quickly. It focuses on build/configuration, testing (with a runnable example), and development/debugging patterns unique to this repository.
 
 1. Build and configuration
 - Toolchain
-  - Node: 22.x (Dockerfile should be updated to node:22.19.0 LTS). Use Node 22 LTS to meet Angular 19 requirements.
+  - Node: 22.x (Dockerfile should be updated to node:22.19.0 LTS). Use Node 22 LTS to meet Angular 20 requirements.
   - Package manager: npm (angular.json sets cli.packageManager to npm).
-  - Angular CLI: ^19.2.15 (via devDependencies) with standalone APIs.
+  - Angular CLI: ^20.2.1 (via devDependencies) with standalone APIs.
 - Install
   - npm ci (preferred for reproducible installs) or npm install for local iteration.
 - Development server
@@ -17,9 +17,9 @@ This document captures project-specific knowledge to help advanced contributors 
 - Dockerized build/run
   - docker/Dockerfile performs a two-stage build: Angular production build in node:22 -> static files served by nginx:1.19-alpine.
   - docker/docker-compose.yml expects an external Docker network named bookcase-network. If not present, create it once: docker network create bookcase-network
-  - The README suggests running the Java backend (bookcase-java) before docker compose up. However, this Angular app also registers a FakeResponseInterceptor which serves deterministic responses for GET api/books[/*] and GET api/books?name=... and returns 404 for unknown numeric IDs:
-    - Provider is wired in src/app/app.config.ts via HTTP_INTERCEPTORS.
-    - If you want to hit a real backend, remove or conditionally disable the FakeResponseInterceptor provider.
+  - The README suggests running the Java backend (bookcase-java) before docker compose up. However, this Angular app also registers a fakeResponseInterceptor which serves deterministic responses for GET api/books[/*] and GET api/books?name=... and returns 404 for unknown numeric IDs:
+    - Provider is wired in src/app/app.config.ts via provideHttpClient(withInterceptors([fakeResponseInterceptor])).
+    - If you want to hit a real backend, remove or conditionally disable the fakeResponseInterceptor provider.
   - Run container: docker compose -f docker/docker-compose.yml up
   - Static files are copied from dist/bookcase-angular/browser/ into nginx at /usr/share/nginx/html and routes are handled via try_files ... /index.html in docker/nginx.conf.
 
@@ -32,7 +32,7 @@ This document captures project-specific knowledge to help advanced contributors 
 - Commands
   - Run entire suite (opens a browser unless in CI): npm test
     - CI-friendly headless run: npm test -- --watch=false --browsers=ChromeHeadless
-  - Run a subset via include filter (Angular 19+):
+  - Run a subset via include filter (Angular 20+):
     - npm test -- --watch=false --browsers=ChromeHeadless --include=src/app/path/to/file.spec.ts
 - Important notes specific to this repo
   - Some existing tests currently require additional providers to pass (e.g., ActivatedRoute, HttpClient). If you’re iterating on a single spec, prefer using the --include filter to run only the relevant file.
@@ -58,19 +58,19 @@ This document captures project-specific knowledge to help advanced contributors 
       provide: ActivatedRoute,
       useValue: { snapshot: { paramMap: new Map([['id', '1']]) } }
     }
-  - HTTP dependencies in services/components: add HttpClientTestingModule to imports and provide FakeResponseInterceptor only if you want to mimic app behavior in tests; otherwise keep tests deterministic by controlling HttpTestingController.
+  - HTTP dependencies in services/components: add HttpClientTestingModule to imports and provide fakeResponseInterceptor only if you want to mimic app behavior in tests; otherwise keep tests deterministic by controlling HttpTestingController.
 
 3. Additional development information
 - Project structure and notable pieces
-  - Angular v19 application using standalone APIs, no NgModule boilerplate for components.
-  - Global providers are set up in src/app/app.config.ts via provideRouter and importProvidersFrom(HttpClientModule), plus the FakeResponseInterceptor.
-  - FakeResponseInterceptor implements canned responses for api/books; useful for UI iteration without a backend.
+  - Angular v20 application using standalone APIs, no NgModule boilerplate for components.
+  - Global providers are set up in src/app/app.config.ts via provideRouter and provideHttpClient(withInterceptors([fakeResponseInterceptor])).
+  - fakeResponseInterceptor implements canned responses for api/books; useful for UI iteration without a backend.
   - Angular build configuration defaults to production; enable development config explicitly for debugging builds.
 - Code style and conventions
   - TypeScript ~5.8; follow Angular Style Guide (selectors, file names, single responsibility, avoid logic in templates). There is no ESLint/tslint configured in this repo at the moment.
   - Prefer pure, input-driven components where possible; move I/O and side-effects into services (e.g., BookService).
 - Debugging tips
-  - For runtime HTTP inspection during local dev, keep FakeResponseInterceptor enabled; it logs interceptions with a counter to the console.
+  - For runtime HTTP inspection during local dev, keep fakeResponseInterceptor enabled; it logs interceptions with a counter to the console.
   - When switching to a real backend, remove the interceptor provider to avoid masking network issues.
   - Use development build or ng serve for source maps. In dockerized production, source maps are not included by default.
 - Docker/deployment caveats
