@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AsyncPipe, NgForOf} from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import {BookService} from "../book.service";
 import {debounceTime, distinctUntilChanged, EMPTY, Observable, startWith, Subject, switchMap, tap} from "rxjs";
 import {RouterLink} from "@angular/router";
@@ -9,10 +9,9 @@ import {PagedBooks} from "../models/paged-books";
   selector: 'books',
   standalone: true,
   imports: [
-    NgForOf,
     RouterLink,
     AsyncPipe
-  ],
+],
   templateUrl: './books.component.html',
   styleUrl: './books.component.css'
 })
