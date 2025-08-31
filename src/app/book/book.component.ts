@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {Book} from "../models/book";
 import {BookService} from "../book.service";
 import {ActivatedRoute} from "@angular/router";
@@ -6,15 +6,22 @@ import { Location } from "@angular/common";
 
 @Component({
   selector: 'book',
-  standalone: true,
   imports: [],
   templateUrl: './book.component.html',
+  standalone: true,
   styleUrl: './book.component.css'
 })
 export class BookComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private bookService = inject(BookService);
+  private location = inject(Location);
+
   book!: Book;
 
-  constructor(private route: ActivatedRoute, private bookService: BookService, private location: Location) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
   }
 
   ngOnInit(): void {

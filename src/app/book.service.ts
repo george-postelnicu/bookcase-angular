@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Book} from "./models/book";
 import {catchError, Observable, of, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
@@ -8,9 +8,14 @@ import {emptyResult, PagedBooks} from "./models/paged-books";
   providedIn: 'root'
 })
 export class BookService {
+  private http = inject(HttpClient);
+
   private readonly heroesUrl: string = "api/books";
 
-  constructor(private http: HttpClient) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
   }
 
   getBooks(): Observable<PagedBooks> {

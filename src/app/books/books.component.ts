@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { AsyncPipe } from "@angular/common";
 import {BookService} from "../book.service";
 import {debounceTime, distinctUntilChanged, EMPTY, Observable, startWith, Subject, switchMap, tap} from "rxjs";
@@ -7,20 +7,25 @@ import {PagedBooks} from "../models/paged-books";
 
 @Component({
   selector: 'books',
-  standalone: true,
   imports: [
     RouterLink,
     AsyncPipe
-],
+  ],
   templateUrl: './books.component.html',
+  standalone: true,
   styleUrl: './books.component.css'
 })
 export class BooksComponent implements OnInit {
+  private bookService = inject(BookService);
+
   books$!: Observable<PagedBooks>;
   filteredBooks$!: Observable<PagedBooks>;
   private searchTerms: Subject<string> = new Subject<string>();
 
-  constructor(private bookService: BookService) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
   }
 
   ngOnInit(): void {
