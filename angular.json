@@ -90,6 +90,12 @@
               "src/styles.css"
             ],
             "scripts": []
+          },
+          "configurations": {
+            "ci": {
+              "browsers": "ChromeHeadless",
+              "watch": false
+            }
           }
         }
       }
