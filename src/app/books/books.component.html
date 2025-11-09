@@ -1,11 +1,29 @@
 <h2>My Books</h2>
 
-<label for="search-box">Book Search</label>
-<input #searchBox id="search-box" (input)="search(searchBox.value)"/>
+<section class="search" [attr.aria-busy]="loading()" [class.loading]="loading()" aria-live="polite">
+  <form (submit)="$event.preventDefault(); onSubmit(searchBox.value)" novalidate>
+    <label for="search-box">Book Search</label>
+    <input
+      #searchBox
+      id="search-box"
+      type="search"
+      [value]="term()"
+      (input)="term.set(searchBox.value)"
+      [disabled]="loading()"
+      autocomplete="off"
+    />
+    <button type="submit" [disabled]="loading()">Search</button>
+    <button type="button" (click)="onReset()" [disabled]="loading()">Reset</button>
+  </form>
+  @if (validationError()) {
+    <p class="error" role="alert">{{ validationError() }}</p>
+  }
+</section>
+
 <ul class="books">
-  @for (book of (books$ | async)?.content; track book) {
+  @for (book of books().content; track book.id) {
     <li class="book-item">
-      <a routerLink="/books/{{book.id}}">
+      <a [routerLink]="['/books', book.id]">
         <span class="badge">{{ book.id }}</span> {{ book.name }}
       </a>
     </li>

@@ -10,41 +10,34 @@ import {emptyResult, PagedBooks} from "./models/paged-books";
 export class BookService {
   private http = inject(HttpClient);
 
-  private readonly heroesUrl: string = "api/books";
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {
-  }
+  private readonly booksUrl: string = "api/books";
 
   getBooks(): Observable<PagedBooks> {
-    return this.http.get<PagedBooks>(this.heroesUrl)
+    return this.http.get<PagedBooks>(this.booksUrl)
       .pipe(
-        tap(_ => console.log('fetched all heroes')),
+        tap(_ => console.log('fetched all books')),
         catchError(this.handleError<PagedBooks>('getBooks', emptyResult))
       );
   }
 
   getBook(id: number): Observable<Book> {
-    const url: string = `${this.heroesUrl}/${id}`;
+    const url: string = `${this.booksUrl}/${id}`;
     return this.http.get<Book>(url).pipe(
-      tap(_ => console.log('fetched a hero')),
+      tap(_ => console.log('fetched a book')),
       catchError(this.handleError<Book>(`getBook id=${id}`))
     );
   }
 
   searchBooks(term: string): Observable<PagedBooks> {
-      return this.http.get<PagedBooks>(`${this.heroesUrl}/?name=${term}`).pipe(
+      return this.http.get<PagedBooks>(`${this.booksUrl}/?name=${term}`).pipe(
         catchError(this.handleError<PagedBooks>('searchBooks', emptyResult))
       );
   }
 
   private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      console.log(`${operation} failed: ${error.message}`);
-
+    return (error: unknown): Observable<T> => {
+      const message = error instanceof Error ? error.message : String(error);
+      console.log(`${operation} failed: ${message}`);
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };

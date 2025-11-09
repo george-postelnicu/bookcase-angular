@@ -1,52 +1,68 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { AsyncPipe } from "@angular/common";
-import {BookService} from "../book.service";
-import {debounceTime, distinctUntilChanged, EMPTY, Observable, startWith, Subject, switchMap, tap} from "rxjs";
-import {RouterLink} from "@angular/router";
-import {PagedBooks} from "../models/paged-books";
+import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@angular/core';
+import { RouterLink } from "@angular/router";
+import { BookService } from "../book.service";
+import { emptyResult, PagedBooks } from "../models/paged-books";
+import { finalize, take } from "rxjs";
 
 @Component({
   selector: 'books',
   imports: [
-    RouterLink,
-    AsyncPipe
+    RouterLink
   ],
   templateUrl: './books.component.html',
-  standalone: true,
-  styleUrl: './books.component.css'
+  styleUrl: './books.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BooksComponent implements OnInit {
-  private bookService = inject(BookService);
+export class BooksComponent {
+  private readonly bookService = inject(BookService);
 
-  books$!: Observable<PagedBooks>;
-  filteredBooks$!: Observable<PagedBooks>;
-  private searchTerms: Subject<string> = new Subject<string>();
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  // state
+  readonly term = signal<string>('');
+  readonly books = signal<PagedBooks>(emptyResult);
+  readonly loading = signal<boolean>(false);
+  readonly validationError = signal<string | null>(null);
 
   constructor() {
+    // Load all books initially
+    this.fetchAll();
   }
 
-  ngOnInit(): void {
-    this.books$ = this.searchTerms.pipe(
-      startWith(""),
-      debounceTime(500),
-      distinctUntilChanged(),
-      tap((value: string) => console.log(`Value searched [${value}]`)),
-      switchMap((value: string) => {
-        if (value.trim() === '') {
-          return this.bookService.getBooks();
-        } else if (value.trim().length > 2) {
-          return this.bookService.searchBooks(value);
-        } else {
-          return EMPTY;
-        }
-      })
-    );
+  onSubmit(term: string): void {
+    this.term.set(term);
+
+    // Validation: require at least 3 characters
+    if (term.length < 3) {
+      this.validationError.set('Please enter at least 3 characters.');
+      this.books.set(emptyResult);
+      return;
+    }
+
+    this.validationError.set(null);
+    this.loading.set(true);
+
+    this.bookService
+      .searchBooks(term)
+      .pipe(
+        take(1),
+        finalize(() => this.loading.set(false))
+      )
+      .subscribe((res) => this.books.set(res));
   }
 
-  search(term: string): void {
-    this.searchTerms.next(term);
+  onReset(): void {
+    this.term.set('');
+    this.validationError.set(null);
+    this.fetchAll();
+  }
+
+  private fetchAll(): void {
+    this.loading.set(true);
+    this.bookService
+      .getBooks()
+      .pipe(
+        take(1),
+        finalize(() => this.loading.set(false))
+      )
+      .subscribe((res) => this.books.set(res));
   }
 }
