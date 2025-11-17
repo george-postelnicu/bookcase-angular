@@ -1,11 +1,8 @@
 import { Routes } from '@angular/router';
-import {BooksComponent} from "./books/books.component";
-import {BookComponent} from "./book/book.component";
-import {PageNotFoundComponent} from "./page-not-found/page-not-found.component";
 
 export const routes: Routes = [
-  {path: 'books', component: BooksComponent},
-  {path: 'books/:id', component: BookComponent},
-  {path: '', redirectTo: '/books', pathMatch: 'full'},
-  {path: '**', component: PageNotFoundComponent}
+  { path: 'books', loadComponent: () => import('./books/books.component').then(m => m.BooksComponent) },
+  { path: 'books/:id', loadComponent: () => import('./book/book.component').then(m => m.BookComponent) },
+  { path: '', redirectTo: '/books', pathMatch: 'full' },
+  { path: '**', loadComponent: () => import('./page-not-found/page-not-found.component').then(m => m.PageNotFoundComponent) }
 ];
