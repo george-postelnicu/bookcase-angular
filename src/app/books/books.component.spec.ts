@@ -82,21 +82,20 @@ describe('BooksComponent', () => {
     expect(items[0].textContent).toContain(ALL_BOOKS.content[0].name);
   });
 
-  it('should show validation error and not call API when searching with < 3 chars', () => {
+  it('should perform search even when searching with < 3 chars', () => {
     // Flush initial load first
     httpMock.expectOne('api/books').flush(ALL_BOOKS);
     fixture.detectChanges();
 
-    component.onSubmit('ab');
+    component.term.set('ab');
+    component.onSubmit();
     fixture.detectChanges();
 
-    // No new HTTP request should be made
-    httpMock.expectNone((r: HttpRequest<any>) => r.url.includes('api/books/?name='));
-
-    const el: HTMLElement = fixture.nativeElement;
-    const errorP = el.querySelector('p.error');
-    expect(errorP).withContext('Validation error paragraph should be shown').not.toBeNull();
-    expect(errorP!.textContent).toContain('Please enter at least 3 characters.');
+    // A search request should be made including the short name term
+    const searchReq = httpMock.expectOne(r => r.url === 'api/books' && r.params.get('name') === 'ab');
+    expect(searchReq.request.method).toBe('GET');
+    searchReq.flush(ALL_BOOKS);
+    fixture.detectChanges();
   });
 
   it('should perform search and render filtered results for >= 3 chars', () => {
@@ -104,10 +103,11 @@ describe('BooksComponent', () => {
     httpMock.expectOne('api/books').flush(ALL_BOOKS);
     fixture.detectChanges();
 
-    component.onSubmit('Architecture');
+    component.term.set('Architecture');
+    component.onSubmit();
     fixture.detectChanges();
 
-    const searchReq = httpMock.expectOne('api/books/?name=Architecture');
+    const searchReq = httpMock.expectOne(r => r.url === 'api/books' && r.params.get('name') === 'Architecture');
     expect(searchReq.request.method).toBe('GET');
 
     // Build a response including only the book with id 3 (Architecture)
@@ -127,9 +127,10 @@ describe('BooksComponent', () => {
     fixture.detectChanges();
 
     // Do a search first
-    component.onSubmit('Architecture');
+    component.term.set('Architecture');
+    component.onSubmit();
     fixture.detectChanges();
-    httpMock.expectOne('api/books/?name=Architecture').flush(makePagedBooks([3]));
+    httpMock.expectOne(r => r.url === 'api/books' && r.params.get('name') === 'Architecture').flush(makePagedBooks([3]));
     fixture.detectChanges();
 
     // Now reset
@@ -146,5 +147,39 @@ describe('BooksComponent', () => {
     expect(input.value).toBe('');
     const items = el.querySelectorAll('ul.books li.book-item');
     expect(items.length).toBe(ALL_BOOKS.content.length);
+  });
+
+  it('should perform advanced search with multiple parameters and AND semantics', () => {
+    // Flush initial load
+    httpMock.expectOne('api/books').flush(ALL_BOOKS);
+    fixture.detectChanges();
+
+    // Set advanced filters
+    component.term.set('Metsa'); // matches book 1 name includes 'Metsa'
+    component.authors.set('Artur'); // author Artur Juhkam present in book 1
+    component.minYear.set(2012);
+    component.maxPages.set(500);
+
+    component.onSubmit();
+    fixture.detectChanges();
+
+    const req = httpMock.expectOne(r => {
+      if (r.url !== 'api/books') return false;
+      const p = r.params;
+      return p.get('name') === 'Metsa'
+        && (p.getAll('authors') ?? []).includes('Artur')
+        && p.get('min_year') === '2012'
+        && p.get('max_pages') === '500';
+    });
+    expect(req.request.method).toBe('GET');
+
+    // Respond with book id 1 only, since it matches all filters
+    req.flush(makePagedBooks([1]));
+    fixture.detectChanges();
+
+    const el: HTMLElement = fixture.nativeElement;
+    const items = el.querySelectorAll('ul.books li.book-item');
+    expect(items.length).toBe(1);
+    expect(items[0].textContent).toContain(String(ALL_BOOKS.content[0].id));
   });
 });

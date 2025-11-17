@@ -1,8 +1,8 @@
 <h2>My Books</h2>
 
 <section class="search" [attr.aria-busy]="loading()" [class.loading]="loading()" aria-live="polite">
-  <form (submit)="$event.preventDefault(); onSubmit(searchBox.value)" novalidate>
-    <label for="search-box">Book Search</label>
+  <form (submit)="$event.preventDefault(); onSubmit()" novalidate>
+    <label for="search-box">Quick Search</label>
     <input
       #searchBox
       id="search-box"
@@ -11,13 +11,81 @@
       (input)="term.set(searchBox.value)"
       [disabled]="loading()"
       autocomplete="off"
+      placeholder="Type at least 3 characters..."
     />
-    <button type="submit" [disabled]="loading()">Search</button>
-    <button type="button" (click)="onReset()" [disabled]="loading()">Reset</button>
+
+    <!-- No validation errors displayed per requirements -->
+
+    <hr />
+
+    <fieldset>
+      <legend>Advanced Filters</legend>
+      <div class="grid">
+        <label>
+          Full Title
+          <input type="text" [value]="fullTitle()" (input)="fullTitle.set($any($event.target).value)" [disabled]="loading()" />
+        </label>
+        <label>
+          Description
+          <input type="text" [value]="description()" (input)="description.set($any($event.target).value)" [disabled]="loading()" />
+        </label>
+        <label>
+          ISBN
+          <input type="text" [value]="isbn()" (input)="isbn.set($any($event.target).value)" [disabled]="loading()" />
+        </label>
+        <label>
+          Barcode
+          <input type="text" [value]="barcode()" (input)="barcode.set($any($event.target).value)" [disabled]="loading()" />
+        </label>
+        <label>
+          Authors (comma separated)
+          <input type="text" [value]="authors()" (input)="authors.set($any($event.target).value)" [disabled]="loading()" />
+        </label>
+        <label>
+          Keywords (comma separated)
+          <input type="text" [value]="keywords()" (input)="keywords.set($any($event.target).value)" [disabled]="loading()" />
+        </label>
+        <label>
+          Languages (comma separated)
+          <input type="text" [value]="languages()" (input)="languages.set($any($event.target).value)" [disabled]="loading()" />
+        </label>
+        <label>
+          Publisher
+          <input type="text" [value]="publisher()" (input)="publisher.set($any($event.target).value)" [disabled]="loading()" />
+        </label>
+        <label>
+          Cover Type
+          <select [value]="coverType()" (change)="coverType.set($any($event.target).value)" [disabled]="loading()">
+            <option value="">Any</option>
+            <option value="HARDCOVER">Hardcover</option>
+            <option value="SOFTCOVER">Softcover</option>
+            <option value="HARDCOVER_WITH_DUST_JACKET">Hardcover with dust jacket</option>
+            <option value="SOFTCOVER_WITH_DUST_JACKET">Softcover with dust jacket</option>
+          </select>
+        </label>
+        <label>
+          Min Year
+          <input type="number" [value]="minYear() ?? ''" (input)="minYear.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
+        </label>
+        <label>
+          Max Year
+          <input type="number" [value]="maxYear() ?? ''" (input)="maxYear.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
+        </label>
+        <label>
+          Min Pages
+          <input type="number" [value]="minPages() ?? ''" (input)="minPages.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
+        </label>
+        <label>
+          Max Pages
+          <input type="number" [value]="maxPages() ?? ''" (input)="maxPages.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
+        </label>
+      </div>
+      <div class="actions">
+        <button type="submit" [disabled]="loading()">Search</button>
+        <button type="button" (click)="onReset()" [disabled]="loading()">Reset</button>
+      </div>
+    </fieldset>
   </form>
-  @if (validationError()) {
-    <p class="error" role="alert">{{ validationError() }}</p>
-  }
 </section>
 
 <ul class="books">
