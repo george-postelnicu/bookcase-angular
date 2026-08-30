@@ -1,12 +1,12 @@
 # Stage 1 - Building
-# Use Node 22 LTS per Angular 21 support matrix
-FROM node:22.19.0 AS builder
+# Use Node 22 LTS per Angular 22 support matrix
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY ./package*.json ./
 # Prefer reproducible installs in CI/containers
 RUN npm ci || npm install
 COPY ./ .
-# Angular 21 defaults to production build; --prod is deprecated
+# Angular 22 defaults to production build; --prod is deprecated
 RUN npm run build
 
 # Stage 2 - Deploying

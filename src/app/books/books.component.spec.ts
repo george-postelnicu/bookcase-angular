@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpRequest, provideHttpClient } from '@angular/common/http';
+import { HttpRequest, provideHttpClient, withXhr } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
@@ -15,7 +15,7 @@ describe('BooksComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [BooksComponent],
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()]
+      providers: [provideRouter([]), provideHttpClient(withXhr()), provideHttpClientTesting()]
     }).compileComponents();
 
     httpMock = TestBed.inject(HttpTestingController);
