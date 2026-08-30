@@ -1,1 +1,10 @@
-<router-outlet/>
+<mat-toolbar color="primary">
+  <span class="app-title">
+    <mat-icon class="app-title-icon">menu_book</mat-icon>
+    <span>{{ title }}</span>
+  </span>
+</mat-toolbar>
+
+<main class="app-container">
+  <router-outlet />
+</main>

@@ -1,0 +1,58 @@
+.book-detail-card {
+  max-width: 720px;
+  margin: 1.5rem auto;
+  padding: 1rem;
+}
+
+.book-header-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: var(--mat-sys-primary);
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+h4 {
+  margin: 0.25rem 0 0 0;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+h5 {
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  font-weight: normal;
+  line-height: 1.5;
+}
+
+.divider {
+  margin: 1rem 0 1.5rem 0;
+}
+
+.book-properties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.book-prop {
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: var(--mat-sys-surface-container-lowest);
+  font-size: 0.9rem;
+}
+
+.book-prop span {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+mat-card-actions {
+  padding-top: 1.5rem;
+}
