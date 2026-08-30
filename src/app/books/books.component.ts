@@ -4,11 +4,27 @@ import { BookService, BookSearchParams } from "../book.service";
 import { emptyResult, PagedBooks } from "../models/paged-books";
 import { finalize, take } from "rxjs";
 import { CoverType } from "../models/cover-type";
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'books',
   imports: [
-    RouterLink
+    RouterLink,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatListModule,
+    MatExpansionModule,
+    MatProgressBarModule
   ],
   templateUrl: './books.component.html',
   styleUrl: './books.component.css',

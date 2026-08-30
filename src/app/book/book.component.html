@@ -1,14 +1,35 @@
-@if (book()) {
-  <div>
-    <h2>{{ book()!.name }} Details</h2>
-    <h4>{{ book()!.fullTitle}}</h4>
-    <h5>{{ book()!.description }}</h5>
-    <div class="book-isbn"><span>isbn: </span>{{ book()!.isbn }}</div>
-    <div class="book-status"><span>status: </span>{{ book()!.status }}</div>
-    <div class="book-cover"><span>cover: </span>{{ book()!.cover }}</div>
-    <div class="book-publishYear"><span>publishYear: </span>{{ book()!.publishYear }}</div>
-    <div class="book-pages"><span>pages: </span>{{ book()!.pages }}</div>
-    <div class="book-barcode"><span>barcode: </span>{{ book()!.barcode }}</div>
-    <button type="button" (click)="goBack()" aria-label="Go back to previous page">Go back</button>
-  </div>
+@if (book(); as currentBook) {
+  <mat-card class="book-detail-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="book-header-icon">auto_stories</mat-icon>
+      <mat-card-title>
+        <h2>{{ currentBook.name }} Details</h2>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <h4>{{ currentBook.fullTitle }}</h4>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <h5>{{ currentBook.description }}</h5>
+
+      <mat-divider class="divider"></mat-divider>
+
+      <div class="book-properties-grid">
+        <div class="book-prop book-isbn"><span>isbn: </span>{{ currentBook.isbn }}</div>
+        <div class="book-prop book-status"><span>status: </span>{{ currentBook.status }}</div>
+        <div class="book-prop book-cover"><span>cover: </span>{{ currentBook.cover }}</div>
+        <div class="book-prop book-publishYear"><span>publishYear: </span>{{ currentBook.publishYear }}</div>
+        <div class="book-prop book-pages"><span>pages: </span>{{ currentBook.pages }}</div>
+        <div class="book-prop book-barcode"><span>barcode: </span>{{ currentBook.barcode }}</div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-stroked-button type="button" (click)="goBack()" aria-label="Go back to previous page">
+        <mat-icon>arrow_back</mat-icon>
+        Go back
+      </button>
+    </mat-card-actions>
+  </mat-card>
 }

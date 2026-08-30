@@ -1,99 +1,145 @@
-<h2>My Books</h2>
-
 <section class="search" [attr.aria-busy]="loading()" [class.loading]="loading()" aria-live="polite">
-  <form (submit)="$event.preventDefault(); onSubmit()" novalidate>
-    <label for="search-box">Quick Search</label>
-    <input
-      #searchBox
-      id="search-box"
-      type="search"
-      [value]="term()"
-      (input)="term.set(searchBox.value)"
-      [disabled]="loading()"
-      autocomplete="off"
-      placeholder="Type at least 3 characters..."
-    />
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" class="search-progress"></mat-progress-bar>
+  }
+  <mat-card class="search-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="header-icon">library_books</mat-icon>
+      <mat-card-title>
+        <h2>My Books</h2>
+      </mat-card-title>
+    </mat-card-header>
 
-    <!-- No validation errors displayed per requirements -->
+    <mat-card-content>
+      <form (submit)="$event.preventDefault(); onSubmit()" novalidate>
+        <div class="quick-search-row">
+          <mat-form-field appearance="outline" class="quick-search-field">
+            <mat-label>Quick Search</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input
+              #searchBox
+              id="search-box"
+              matInput
+              type="search"
+              [value]="term()"
+              (input)="term.set(searchBox.value)"
+              [disabled]="loading()"
+              autocomplete="off"
+              placeholder="Type at least 3 characters..."
+            />
+          </mat-form-field>
+        </div>
 
-    <hr />
+        <mat-expansion-panel class="filter-panel" [expanded]="false">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon class="panel-icon">tune</mat-icon>
+              <span>Advanced Filters</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
 
-    <fieldset>
-      <legend>Advanced Filters</legend>
-      <div class="grid">
-        <label>
-          Full Title
-          <input type="text" [value]="fullTitle()" (input)="fullTitle.set($any($event.target).value)" [disabled]="loading()" />
-        </label>
-        <label>
-          Description
-          <input type="text" [value]="description()" (input)="description.set($any($event.target).value)" [disabled]="loading()" />
-        </label>
-        <label>
-          ISBN
-          <input type="text" [value]="isbn()" (input)="isbn.set($any($event.target).value)" [disabled]="loading()" />
-        </label>
-        <label>
-          Barcode
-          <input type="text" [value]="barcode()" (input)="barcode.set($any($event.target).value)" [disabled]="loading()" />
-        </label>
-        <label>
-          Authors (comma separated)
-          <input type="text" [value]="authors()" (input)="authors.set($any($event.target).value)" [disabled]="loading()" />
-        </label>
-        <label>
-          Keywords (comma separated)
-          <input type="text" [value]="keywords()" (input)="keywords.set($any($event.target).value)" [disabled]="loading()" />
-        </label>
-        <label>
-          Languages (comma separated)
-          <input type="text" [value]="languages()" (input)="languages.set($any($event.target).value)" [disabled]="loading()" />
-        </label>
-        <label>
-          Publisher
-          <input type="text" [value]="publisher()" (input)="publisher.set($any($event.target).value)" [disabled]="loading()" />
-        </label>
-        <label>
-          Cover Type
-          <select [value]="coverType()" (change)="coverType.set($any($event.target).value)" [disabled]="loading()">
-            <option value="">Any</option>
-            <option value="HARDCOVER">Hardcover</option>
-            <option value="SOFTCOVER">Softcover</option>
-            <option value="HARDCOVER_WITH_DUST_JACKET">Hardcover with dust jacket</option>
-            <option value="SOFTCOVER_WITH_DUST_JACKET">Softcover with dust jacket</option>
-          </select>
-        </label>
-        <label>
-          Min Year
-          <input type="number" [value]="minYear() ?? ''" (input)="minYear.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
-        </label>
-        <label>
-          Max Year
-          <input type="number" [value]="maxYear() ?? ''" (input)="maxYear.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
-        </label>
-        <label>
-          Min Pages
-          <input type="number" [value]="minPages() ?? ''" (input)="minPages.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
-        </label>
-        <label>
-          Max Pages
-          <input type="number" [value]="maxPages() ?? ''" (input)="maxPages.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
-        </label>
-      </div>
-      <div class="actions">
-        <button type="submit" [disabled]="loading()">Search</button>
-        <button type="button" (click)="onReset()" [disabled]="loading()">Reset</button>
-      </div>
-    </fieldset>
-  </form>
+          <div class="grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Full Title</mat-label>
+              <input matInput type="text" [value]="fullTitle()" (input)="fullTitle.set($any($event.target).value)" [disabled]="loading()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Description</mat-label>
+              <input matInput type="text" [value]="description()" (input)="description.set($any($event.target).value)" [disabled]="loading()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>ISBN</mat-label>
+              <input matInput type="text" [value]="isbn()" (input)="isbn.set($any($event.target).value)" [disabled]="loading()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Barcode</mat-label>
+              <input matInput type="text" [value]="barcode()" (input)="barcode.set($any($event.target).value)" [disabled]="loading()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Authors (comma separated)</mat-label>
+              <input matInput type="text" [value]="authors()" (input)="authors.set($any($event.target).value)" [disabled]="loading()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Keywords (comma separated)</mat-label>
+              <input matInput type="text" [value]="keywords()" (input)="keywords.set($any($event.target).value)" [disabled]="loading()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Languages (comma separated)</mat-label>
+              <input matInput type="text" [value]="languages()" (input)="languages.set($any($event.target).value)" [disabled]="loading()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Publisher</mat-label>
+              <input matInput type="text" [value]="publisher()" (input)="publisher.set($any($event.target).value)" [disabled]="loading()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Cover Type</mat-label>
+              <select matNativeControl [value]="coverType()" (change)="coverType.set($any($event.target).value)" [disabled]="loading()">
+                <option value="">Any</option>
+                <option value="HARDCOVER">Hardcover</option>
+                <option value="SOFTCOVER">Softcover</option>
+                <option value="HARDCOVER_WITH_DUST_JACKET">Hardcover with dust jacket</option>
+                <option value="SOFTCOVER_WITH_DUST_JACKET">Softcover with dust jacket</option>
+              </select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Min Year</mat-label>
+              <input matInput type="number" [value]="minYear() ?? ''" (input)="minYear.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Max Year</mat-label>
+              <input matInput type="number" [value]="maxYear() ?? ''" (input)="maxYear.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Min Pages</mat-label>
+              <input matInput type="number" [value]="minPages() ?? ''" (input)="minPages.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Max Pages</mat-label>
+              <input matInput type="number" [value]="maxPages() ?? ''" (input)="maxPages.set($any($event.target).value ? +$any($event.target).value : null)" [disabled]="loading()" />
+            </mat-form-field>
+          </div>
+        </mat-expansion-panel>
+
+        <div class="actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+            <mat-icon>search</mat-icon>
+            Search
+          </button>
+          <button mat-stroked-button type="button" (click)="onReset()" [disabled]="loading()">
+            <mat-icon>restart_alt</mat-icon>
+            Reset
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </section>
 
-<ul class="books">
-  @for (book of books().content; track book.id) {
-    <li class="book-item">
-      <a [routerLink]="['/books', book.id]">
-        <span class="badge">{{ book.id }}</span> {{ book.name }}
-      </a>
-    </li>
-  }
-</ul>
+<mat-card class="results-card">
+  <mat-card-content>
+    <ul mat-nav-list class="books">
+      @for (book of books().content; track book.id) {
+        <li class="book-item">
+          <a mat-list-item [routerLink]="['/books', book.id]">
+            <mat-icon matListItemIcon>book</mat-icon>
+            <span matListItemTitle>
+              <span class="badge">{{ book.id }}</span> {{ book.name }}
+            </span>
+          </a>
+        </li>
+      }
+    </ul>
+  </mat-card-content>
+</mat-card>

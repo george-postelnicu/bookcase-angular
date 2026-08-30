@@ -1,3 +1,15 @@
-<h1>Page not found</h1>
-<p role="status">The page you’re looking for doesn’t exist.</p>
-<a [routerLink]="['/books']" class="btn">Go to Books</a>
+<mat-card class="not-found-card">
+  <mat-card-header>
+    <mat-icon mat-card-avatar class="not-found-icon">error_outline</mat-icon>
+    <mat-card-title><h1>Page not found</h1></mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p role="status">The page you’re looking for doesn’t exist.</p>
+  </mat-card-content>
+  <mat-card-actions>
+    <a mat-flat-button [routerLink]="['/books']" class="btn">
+      <mat-icon>arrow_back</mat-icon>
+      Go to Books
+    </a>
+  </mat-card-actions>
+</mat-card>

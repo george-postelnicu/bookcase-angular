@@ -33,3 +33,17 @@ docker compose -f docker/docker-compose.yml up
 ```shell
 docker compose -f docker/docker-compose.yml down
 ```
+
+## clean
+
+To clean and remove cached Docker images so new changes are picked up:
+
+```shell
+docker compose -f docker/docker-compose.yml down --rmi local
+```
+
+Or rebuild the image without using cache:
+
+```shell
+docker compose -f docker/docker-compose.yml build --no-cache
+```
