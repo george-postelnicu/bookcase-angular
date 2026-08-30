@@ -1,4 +1,4 @@
 export interface Keyword {
-  id: number,
-  name: string
+  id: number;
+  name: string;
 }

@@ -112,3 +112,9 @@ Here is a link to the most recent Angular style guide https://angular.dev/style-
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+### Testing & Code Coverage
+
+- Always write or update tests alongside code changes
+- Global code coverage thresholds are strictly enforced (>= 90% for branches, 100% for statements, functions, and lines)
+- Always execute `npm run test-ci` or `npm run test:coverage` to deterministically verify that all tests pass and coverage thresholds are satisfied before finishing tasks

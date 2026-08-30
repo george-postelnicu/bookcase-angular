@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpRequest, provideHttpClient, withXhr } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
 import { BooksComponent } from './books.component';
 import { ALL_BOOKS } from '../models/book-data-common';
+import { CoverType } from '../models/cover-type';
 import { emptyResult, PagedBooks } from '../models/paged-books';
 
 describe('BooksComponent', () => {
@@ -15,7 +16,7 @@ describe('BooksComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [BooksComponent],
-      providers: [provideRouter([]), provideHttpClient(withXhr()), provideHttpClientTesting()]
+      providers: [provideRouter([]), provideHttpClient(withXhr()), provideHttpClientTesting()],
     }).compileComponents();
 
     httpMock = TestBed.inject(HttpTestingController);
@@ -31,13 +32,13 @@ describe('BooksComponent', () => {
   });
 
   function makePagedBooks(contentIds: number[]): PagedBooks {
-    const content = ALL_BOOKS.content.filter(b => contentIds.includes(b.id));
+    const content = ALL_BOOKS.content.filter((b) => contentIds.includes(b.id));
     return {
       ...emptyResult,
       content,
       totalElements: content.length,
       numberOfElements: content.length,
-      empty: content.length === 0
+      empty: content.length === 0,
     };
   }
 
@@ -75,10 +76,9 @@ describe('BooksComponent', () => {
     fixture.detectChanges();
 
     const el: HTMLElement = fixture.nativeElement;
-    const items = el.querySelectorAll('ul.books li.book-item');
+    const items = el.querySelectorAll('mat-card.book-item');
     expect(items.length).toBe(ALL_BOOKS.content.length);
-    // spot-check for the first item text contains id and name
-    expect(items[0].textContent).toContain(String(ALL_BOOKS.content[0].id));
+    // spot-check for the first item text contains name
     expect(items[0].textContent).toContain(ALL_BOOKS.content[0].name);
   });
 
@@ -92,7 +92,9 @@ describe('BooksComponent', () => {
     fixture.detectChanges();
 
     // A search request should be made including the short name term
-    const searchReq = httpMock.expectOne(r => r.url === 'api/books' && r.params.get('name') === 'ab');
+    const searchReq = httpMock.expectOne(
+      (r) => r.url === 'api/books' && r.params.get('name') === 'ab',
+    );
     expect(searchReq.request.method).toBe('GET');
     searchReq.flush(ALL_BOOKS);
     fixture.detectChanges();
@@ -107,7 +109,9 @@ describe('BooksComponent', () => {
     component.onSubmit();
     fixture.detectChanges();
 
-    const searchReq = httpMock.expectOne(r => r.url === 'api/books' && r.params.get('name') === 'Architecture');
+    const searchReq = httpMock.expectOne(
+      (r) => r.url === 'api/books' && r.params.get('name') === 'Architecture',
+    );
     expect(searchReq.request.method).toBe('GET');
 
     // Build a response including only the book with id 3 (Architecture)
@@ -116,7 +120,7 @@ describe('BooksComponent', () => {
     fixture.detectChanges();
 
     const el: HTMLElement = fixture.nativeElement;
-    const items = el.querySelectorAll('ul.books li.book-item');
+    const items = el.querySelectorAll('mat-card.book-item');
     expect(items.length).toBe(1);
     expect(items[0].textContent).toContain('100 Steps Through 20th Century Estonian Architecture');
   });
@@ -130,7 +134,9 @@ describe('BooksComponent', () => {
     component.term.set('Architecture');
     component.onSubmit();
     fixture.detectChanges();
-    httpMock.expectOne(r => r.url === 'api/books' && r.params.get('name') === 'Architecture').flush(makePagedBooks([3]));
+    httpMock
+      .expectOne((r) => r.url === 'api/books' && r.params.get('name') === 'Architecture')
+      .flush(makePagedBooks([3]));
     fixture.detectChanges();
 
     // Now reset
@@ -145,7 +151,7 @@ describe('BooksComponent', () => {
     const el: HTMLElement = fixture.nativeElement;
     const input: HTMLInputElement = el.querySelector('#search-box')!;
     expect(input.value).toBe('');
-    const items = el.querySelectorAll('ul.books li.book-item');
+    const items = el.querySelectorAll('mat-card.book-item');
     expect(items.length).toBe(ALL_BOOKS.content.length);
   });
 
@@ -163,13 +169,15 @@ describe('BooksComponent', () => {
     component.onSubmit();
     fixture.detectChanges();
 
-    const req = httpMock.expectOne(r => {
+    const req = httpMock.expectOne((r) => {
       if (r.url !== 'api/books') return false;
       const p = r.params;
-      return p.get('name') === 'Metsa'
-        && (p.getAll('authors') ?? []).includes('Artur')
-        && p.get('min_year') === '2012'
-        && p.get('max_pages') === '500';
+      return (
+        p.get('name') === 'Metsa' &&
+        (p.getAll('authors') ?? []).includes('Artur') &&
+        p.get('min_year') === '2012' &&
+        p.get('max_pages') === '500'
+      );
     });
     expect(req.request.method).toBe('GET');
 
@@ -178,8 +186,140 @@ describe('BooksComponent', () => {
     fixture.detectChanges();
 
     const el: HTMLElement = fixture.nativeElement;
-    const items = el.querySelectorAll('ul.books li.book-item');
+    const items = el.querySelectorAll('mat-card.book-item');
     expect(items.length).toBe(1);
-    expect(items[0].textContent).toContain(String(ALL_BOOKS.content[0].id));
+    expect(items[0].textContent).toContain(ALL_BOOKS.content[0].name);
+  });
+
+  it('should display paginator with default 50 items per page and handle page changes', () => {
+    // Flush initial load
+    httpMock.expectOne('api/books').flush(ALL_BOOKS);
+    fixture.detectChanges();
+
+    const el: HTMLElement = fixture.nativeElement;
+    const paginator = el.querySelector('mat-paginator');
+    expect(paginator).toBeTruthy();
+
+    expect(component.pageSizeOptions).toEqual([10, 20, 50]);
+    expect(Math.max(...component.pageSizeOptions)).toBe(50);
+    expect(component.pageSize()).toBe(50);
+
+    // Trigger page change
+    component.onPageChange({ pageIndex: 1, pageSize: 20, length: 100 });
+    fixture.detectChanges();
+
+    const req = httpMock.expectOne(
+      (r) => r.url === 'api/books' && r.params.get('page') === '1' && r.params.get('size') === '20',
+    );
+    expect(req.request.method).toBe('GET');
+    req.flush(ALL_BOOKS);
+    fixture.detectChanges();
+
+    expect(component.pageIndex()).toBe(1);
+    expect(component.pageSize()).toBe(20);
+  });
+
+  it('should reset all advanced filter signals when onReset is invoked', () => {
+    httpMock.expectOne('api/books').flush(ALL_BOOKS);
+    fixture.detectChanges();
+
+    component.term.set('Custom Term');
+    component.fullTitle.set('Full Title');
+    component.description.set('Description');
+    component.isbn.set('123456');
+    component.barcode.set('987654');
+    component.authors.set('Author 1');
+    component.keywords.set('Key 1');
+    component.languages.set('Lang 1');
+    component.publisher.set('Pub 1');
+    component.coverType.set(CoverType.HARDCOVER);
+    component.minYear.set(2000);
+    component.maxYear.set(2025);
+    component.minPages.set(50);
+    component.maxPages.set(500);
+    component.pageIndex.set(2);
+
+    component.onReset();
+    fixture.detectChanges();
+
+    httpMock.expectOne('api/books').flush(ALL_BOOKS);
+    fixture.detectChanges();
+
+    expect(component.term()).toBe('');
+    expect(component.fullTitle()).toBe('');
+    expect(component.description()).toBe('');
+    expect(component.isbn()).toBe('');
+    expect(component.barcode()).toBe('');
+    expect(component.authors()).toBe('');
+    expect(component.keywords()).toBe('');
+    expect(component.languages()).toBe('');
+    expect(component.publisher()).toBe('');
+    expect(component.coverType()).toBe('');
+    expect(component.minYear()).toBeNull();
+    expect(component.maxYear()).toBeNull();
+    expect(component.minPages()).toBeNull();
+    expect(component.maxPages()).toBeNull();
+    expect(component.pageIndex()).toBe(0);
+  });
+
+  it('should pass all filter signals into search params when onSubmit is called', () => {
+    httpMock.expectOne('api/books').flush(ALL_BOOKS);
+    fixture.detectChanges();
+
+    component.term.set('Book');
+    component.fullTitle.set('Full Book Title');
+    component.description.set('A great description');
+    component.isbn.set('978-0-123456-47-2');
+    component.barcode.set('9780123456472');
+    component.authors.set('Author A, Author B');
+    component.keywords.set('Tech, Coding');
+    component.languages.set('English, Estonian');
+    component.publisher.set('Publisher X');
+    component.coverType.set(CoverType.HARDCOVER);
+    component.minYear.set(2010);
+    component.maxYear.set(2020);
+    component.minPages.set(100);
+    component.maxPages.set(300);
+
+    component.onSubmit();
+    fixture.detectChanges();
+
+    const req = httpMock.expectOne((r) => {
+      if (r.url !== 'api/books') return false;
+      const p = r.params;
+      return (
+        p.get('name') === 'Book' &&
+        p.get('full_title') === 'Full Book Title' &&
+        p.get('description') === 'A great description' &&
+        p.get('isbn') === '978-0-123456-47-2' &&
+        p.get('barcode') === '9780123456472' &&
+        (p.getAll('authors') ?? []).length === 2 &&
+        (p.getAll('keywords') ?? []).length === 2 &&
+        (p.getAll('languages') ?? []).length === 2 &&
+        p.get('publisher') === 'Publisher X' &&
+        p.get('cover_type') === 'HARDCOVER' &&
+        p.get('min_year') === '2010' &&
+        p.get('max_year') === '2020' &&
+        p.get('min_pages') === '100' &&
+        p.get('max_pages') === '300'
+      );
+    });
+    expect(req.request.method).toBe('GET');
+    req.flush(ALL_BOOKS);
+    fixture.detectChanges();
+  });
+
+  it('should handle pageable response with missing pageNumber and pageSize properties', () => {
+    // Initial fetchAll from constructor
+    const req = httpMock.expectOne('api/books');
+    const mockPagedWithMissingFields: PagedBooks = {
+      ...emptyResult,
+      pageable: {} as unknown as PagedBooks['pageable'],
+    };
+    req.flush(mockPagedWithMissingFields);
+    fixture.detectChanges();
+
+    expect(component.pageIndex()).toBe(0);
+    expect(component.pageSize()).toBe(50);
   });
 });

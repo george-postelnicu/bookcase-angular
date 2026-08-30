@@ -19,14 +19,21 @@
         <div class="book-prop book-isbn"><span>isbn: </span>{{ currentBook.isbn }}</div>
         <div class="book-prop book-status"><span>status: </span>{{ currentBook.status }}</div>
         <div class="book-prop book-cover"><span>cover: </span>{{ currentBook.cover }}</div>
-        <div class="book-prop book-publishYear"><span>publishYear: </span>{{ currentBook.publishYear }}</div>
+        <div class="book-prop book-publishYear">
+          <span>publishYear: </span>{{ currentBook.publishYear }}
+        </div>
         <div class="book-prop book-pages"><span>pages: </span>{{ currentBook.pages }}</div>
         <div class="book-prop book-barcode"><span>barcode: </span>{{ currentBook.barcode }}</div>
       </div>
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-stroked-button type="button" (click)="goBack()" aria-label="Go back to previous page">
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="goBack()"
+        aria-label="Go back to previous page"
+      >
         <mat-icon>arrow_back</mat-icon>
         Go back
       </button>

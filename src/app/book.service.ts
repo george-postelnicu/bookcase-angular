@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import {Book} from "./models/book";
-import {catchError, Observable, of, tap} from "rxjs";
-import {HttpClient, HttpParams} from "@angular/common/http";
-import {emptyResult, PagedBooks} from "./models/paged-books";
-import {CoverType} from "./models/cover-type";
+import { Book } from './models/book';
+import { catchError, Observable, of, tap } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { emptyResult, PagedBooks } from './models/paged-books';
+import { CoverType } from './models/cover-type';
 
 export interface BookSearchParams {
   page?: number;
@@ -25,26 +25,25 @@ export interface BookSearchParams {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BookService {
   private http = inject(HttpClient);
 
-  private readonly booksUrl: string = "api/books";
+  private readonly booksUrl = 'api/books';
 
   getBooks(): Observable<PagedBooks> {
-    return this.http.get<PagedBooks>(this.booksUrl)
-      .pipe(
-        tap(_ => console.log('fetched all books')),
-        catchError(this.handleError<PagedBooks>('getBooks', emptyResult))
-      );
+    return this.http.get<PagedBooks>(this.booksUrl).pipe(
+      tap(() => console.log('fetched all books')),
+      catchError(this.handleError<PagedBooks>('getBooks', emptyResult)),
+    );
   }
 
   getBook(id: number): Observable<Book> {
-    const url: string = `${this.booksUrl}/${id}`;
+    const url = `${this.booksUrl}/${id}`;
     return this.http.get<Book>(url).pipe(
-      tap(_ => console.log('fetched a book')),
-      catchError(this.handleError<Book>(`getBook id=${id}`))
+      tap(() => console.log('fetched a book')),
+      catchError(this.handleError<Book>(`getBook id=${id}`)),
     );
   }
 
@@ -57,10 +56,15 @@ export class BookService {
     if (params.page != null) append('page', params.page);
     if (params.size != null) append('size', params.size);
 
-    const simpleKeys: Array<keyof BookSearchParams> = [
-      'name', 'full_title', 'description', 'isbn', 'barcode', 'publisher'
+    const simpleKeys: (keyof BookSearchParams)[] = [
+      'name',
+      'full_title',
+      'description',
+      'isbn',
+      'barcode',
+      'publisher',
     ];
-    simpleKeys.forEach(k => {
+    simpleKeys.forEach((k) => {
       const v = params[k];
       if (v != null && v !== '') append(k as string, v as string);
     });
@@ -71,18 +75,20 @@ export class BookService {
     if (params.min_pages != null) append('min_pages', params.min_pages);
     if (params.max_pages != null) append('max_pages', params.max_pages);
 
-    const arrayKeys: Array<keyof BookSearchParams> = ['authors', 'keywords', 'languages'];
-    arrayKeys.forEach(k => {
+    const arrayKeys: (keyof BookSearchParams)[] = ['authors', 'keywords', 'languages'];
+    arrayKeys.forEach((k) => {
       const arr = params[k] as string[] | null | undefined;
       if (arr && arr.length) {
-        arr.forEach(v => { if (v && v.trim()) httpParams = httpParams.append(k as string, v.trim()); });
+        arr.forEach((v) => {
+          if (v && v.trim()) httpParams = httpParams.append(k as string, v.trim());
+        });
       }
     });
 
-    return this.http.get<PagedBooks>(this.booksUrl, { params: httpParams })
-      .pipe(
-        tap(_ => console.log(`searched for books matching ${JSON.stringify(params)}`)),
-        catchError(this.handleError<PagedBooks>('search', emptyResult)));
+    return this.http.get<PagedBooks>(this.booksUrl, { params: httpParams }).pipe(
+      tap(() => console.log(`searched for books matching ${JSON.stringify(params)}`)),
+      catchError(this.handleError<PagedBooks>('search', emptyResult)),
+    );
   }
 
   private handleError<T>(operation = 'operation', result?: T) {

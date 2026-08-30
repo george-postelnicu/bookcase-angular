@@ -1,8 +1,23 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: 'books', loadComponent: () => import('./books/books.component').then(m => m.BooksComponent) },
-  { path: 'books/:id', loadComponent: () => import('./book/book.component').then(m => m.BookComponent) },
+  {
+    path: 'books',
+    loadComponent: () => import('./books/books.component').then((m) => m.BooksComponent),
+  },
+  {
+    path: 'books/:id',
+    loadComponent: () => import('./book/book.component').then((m) => m.BookComponent),
+  },
+  {
+    path: 'page-not-found',
+    loadComponent: () =>
+      import('./page-not-found/page-not-found.component').then((m) => m.PageNotFoundComponent),
+  },
   { path: '', redirectTo: '/books', pathMatch: 'full' },
-  { path: '**', loadComponent: () => import('./page-not-found/page-not-found.component').then(m => m.PageNotFoundComponent) }
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./page-not-found/page-not-found.component').then((m) => m.PageNotFoundComponent),
+  },
 ];
