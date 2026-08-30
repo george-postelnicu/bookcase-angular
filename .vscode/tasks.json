@@ -30,10 +30,10 @@
       }
     },
     {
-      "label": "Angular: Update to latest 20.x",
+      "label": "Angular: Update to latest 21.x",
       "type": "npm",
-      "script": "ng-update-20",
-      "detail": "Runs: ng update @angular/core@^20.3 @angular/cli@^20.3",
+      "script": "ng-update-21",
+      "detail": "Runs: ng update @angular/core@^21.2 @angular/cli@^21.2",
       "problemMatcher": []
     }
   ]
