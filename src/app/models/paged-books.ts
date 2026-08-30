@@ -1,4 +1,4 @@
-import {Book} from "./book";
+import { Book } from './book';
 
 export interface PagedBooks {
   content: Book[];
@@ -33,19 +33,19 @@ export const emptyResult: PagedBooks = {
   content: [],
   pageable: {
     pageNumber: 0,
-    pageSize: 20,
-    sort: {sorted: false, unsorted: true, empty: true},
+    pageSize: 50,
+    sort: { sorted: false, unsorted: true, empty: true },
     offset: 0,
     paged: true,
-    unpaged: false
+    unpaged: false,
   },
   totalPages: 0,
   totalElements: 0,
   last: true,
   first: true,
-  size: 20,
+  size: 50,
   number: 0,
-  sort: {sorted: false, unsorted: true, empty: true},
+  sort: { sorted: false, unsorted: true, empty: true },
   numberOfElements: 0,
-  empty: true
-}
+  empty: true,
+};

@@ -1,20 +1,20 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { RouterLink } from "@angular/router";
-import { BookService, BookSearchParams } from "../book.service";
-import { emptyResult, PagedBooks } from "../models/paged-books";
-import { finalize, take } from "rxjs";
-import { CoverType } from "../models/cover-type";
+import { RouterLink } from '@angular/router';
+import { BookService, BookSearchParams } from '../book.service';
+import { emptyResult, PagedBooks } from '../models/paged-books';
+import { finalize, take } from 'rxjs';
+import { CoverType } from '../models/cover-type';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
-  selector: 'books',
+  selector: 'app-books',
   imports: [
     RouterLink,
     MatCardModule,
@@ -22,16 +22,21 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatListModule,
     MatExpansionModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatPaginatorModule,
   ],
   templateUrl: './books.component.html',
   styleUrl: './books.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BooksComponent {
   private readonly bookService = inject(BookService);
+
+  // Pagination state
+  readonly pageIndex = signal<number>(0);
+  readonly pageSize = signal<number>(50);
+  readonly pageSizeOptions = [10, 20, 50];
 
   // state
   readonly term = signal<string>('');
@@ -60,34 +65,8 @@ export class BooksComponent {
   }
 
   onSubmit(): void {
-    // Build params from signals (no validations; just gather and send)
-    const toArray = (val: string) => val.split(',').map(v => v.trim()).filter(Boolean);
-    const params: BookSearchParams = {
-      name: this.term() || null,
-      full_title: this.fullTitle() || null,
-      description: this.description() || null,
-      isbn: this.isbn() || null,
-      barcode: this.barcode() || null,
-      authors: this.authors() ? toArray(this.authors()) : null,
-      keywords: this.keywords() ? toArray(this.keywords()) : null,
-      languages: this.languages() ? toArray(this.languages()) : null,
-      publisher: this.publisher() || null,
-      cover_type: this.coverType() || null,
-      min_year: this.minYear(),
-      max_year: this.maxYear(),
-      min_pages: this.minPages(),
-      max_pages: this.maxPages()
-    };
-
-    // Always perform search with gathered params
-    this.loading.set(true);
-    this.bookService
-      .search(params)
-      .pipe(
-        take(1),
-        finalize(() => this.loading.set(false))
-      )
-      .subscribe(res => this.books.set(res));
+    this.pageIndex.set(0);
+    this.fetchPage();
   }
 
   onReset(): void {
@@ -105,7 +84,14 @@ export class BooksComponent {
     this.maxYear.set(null);
     this.minPages.set(null);
     this.maxPages.set(null);
+    this.pageIndex.set(0);
     this.fetchAll();
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
+    this.fetchPage();
   }
 
   private fetchAll(): void {
@@ -114,7 +100,50 @@ export class BooksComponent {
       .getBooks()
       .pipe(
         take(1),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.loading.set(false)),
+      )
+      .subscribe((res) => {
+        this.books.set(res);
+        if (res.pageable) {
+          this.pageIndex.set(res.pageable.pageNumber ?? 0);
+          this.pageSize.set(res.pageable.pageSize ?? 50);
+        }
+      });
+  }
+
+  private fetchPage(): void {
+    // Build params from signals (no validations; just gather and send)
+    const toArray = (val: string) =>
+      val
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean);
+    const params: BookSearchParams = {
+      page: this.pageIndex(),
+      size: this.pageSize(),
+      name: this.term() || null,
+      full_title: this.fullTitle() || null,
+      description: this.description() || null,
+      isbn: this.isbn() || null,
+      barcode: this.barcode() || null,
+      authors: this.authors() ? toArray(this.authors()) : null,
+      keywords: this.keywords() ? toArray(this.keywords()) : null,
+      languages: this.languages() ? toArray(this.languages()) : null,
+      publisher: this.publisher() || null,
+      cover_type: this.coverType() || null,
+      min_year: this.minYear(),
+      max_year: this.maxYear(),
+      min_pages: this.minPages(),
+      max_pages: this.maxPages(),
+    };
+
+    // Always perform search with gathered params
+    this.loading.set(true);
+    this.bookService
+      .search(params)
+      .pipe(
+        take(1),
+        finalize(() => this.loading.set(false)),
       )
       .subscribe((res) => this.books.set(res));
   }

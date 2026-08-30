@@ -5,7 +5,7 @@ Angular 22 application using standalone components and modern build system.
 ## Prerequisites
 
 - **Node.js**: v20.19+, v22.22.3+, or v24.0+ (required for Angular 22)
-- **npm**: 8.0+ 
+- **npm**: 8.0+
 - **Angular CLI**: 22.x
 
 ## Technology Stack

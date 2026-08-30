@@ -9,6 +9,6 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [RouterLink, MatCardModule, MatButtonModule, MatIconModule],
   templateUrl: './page-not-found.component.html',
   styleUrl: './page-not-found.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageNotFoundComponent {}
