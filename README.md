@@ -1,17 +1,17 @@
 # bookcase-angular
 
-Angular 20 application using standalone components and modern build system.
+Angular 21 application using standalone components and modern build system.
 
 ## Prerequisites
 
-- **Node.js**: v20.19+ or v22.12+ (required for Angular 20)
+- **Node.js**: v20.19+ or v22.12+ (required for Angular 21)
 - **npm**: 8.0+ 
-- **Angular CLI**: 20.x
+- **Angular CLI**: 21.x
 
 ## Technology Stack
 
-- **Angular**: 20.2.1
-- **TypeScript**: 5.8.3
+- **Angular**: 21.2.22
+- **TypeScript**: 5.9.0
 - **Build System**: @angular-devkit/build-angular:application
 - **HTTP Client**: Modern provideHttpClient with functional interceptors
 - **Testing**: Karma + Jasmine
